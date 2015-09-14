@@ -2,11 +2,12 @@ package com.vaojr.android.gristdraft;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,60 +16,77 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.vaojr.android.gristdraft.GristDbHelper.GristListCursor;
-import com.vaojr.android.gristdraft.GristContract.ListEntry;
 
-public class ListingFragment extends Fragment {
 
-    public static final String EXTRA_LIST_ID_LIST_FRAG =
-            "com.vaojr.android.gristdraft.list_id_list_frag";
+/**
+ * Created by him on 8/3/15.
+ */
+public class ItemListFragment extends Fragment {
 
-    public static final String EXTRA_LIST_NAME_LIST_FRAG =
-            "com.vaojr.android.gristdraft.list_name_list_frag";
+    public static final String EXTRA_LIST_ID =
+            "com.vaojr.android.gristdraft.list_id";
+
+    public static final String EXTRA_LIST_NAME =
+            "com.vaojr.android.gristdraft.list_name";
 
     private SimpleCursorRecyclerAdapter mSimpleCursorRecyclerAdapter;
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private GristListCursor mCursor;
+    private GristDbHelper.GristItemCursor mCursor;
 
-    public ListingFragment() {
-        super();
+    private long listId;
+    private String listName;
+
+    public static ItemListFragment newInstance(long listId, String listName) {
+        Bundle args = new Bundle();
+        args.putLong(EXTRA_LIST_ID, listId);
+        args.putString(EXTRA_LIST_NAME, listName);
+
+        ItemListFragment fragment = new ItemListFragment();
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Query the list of GristLists
-        mCursor = ListManager.get(getActivity()).queryGls();
+        setRetainInstance(true);
+
+        listId = getArguments().getLong(EXTRA_LIST_ID);
+        listName = getArguments().getString(EXTRA_LIST_NAME);
+        mCursor = ListManager.get(getActivity()).queryItemList(listId);
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-
-        View v = inflater.inflate(R.layout.fragment_listing, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
         FloatingActionButton mFloatingActionButton = (FloatingActionButton)
-                v.findViewById(R.id.floatingActionButtonList);
+                view.findViewById(R.id.floatingActionButtonItem);
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getActivity(), ListNameActivity.class);
+                Intent i = new Intent(getActivity(), ItemActivity.class);
+                i.putExtra(ItemFragment.EXTRA_LIST_NAME_ITEM_FRAGMENT, listName);
+                i.putExtra(ItemFragment.EXTRA_LIST_ID_ITEM_FRAGMENT, listId);
                 startActivity(i);
             }
         });
 
-        mRecyclerView = (RecyclerView)v.findViewById(R.id.recyclerView);
+        mRecyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mSimpleCursorRecyclerAdapter = new SimpleCursorRecyclerAdapter(
-                R.layout.item_layout, mCursor, new String[] {ListEntry.COLUMN_NAME}, new int[] {R.id.textView});
+                R.layout.item_layout, mCursor,
+                new String[] {GristContract.ItemListEntry.COLUMN_ITEM_NAME},
+                new int[] {R.id.textView});
         mRecyclerView.setAdapter(mSimpleCursorRecyclerAdapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new MyItemDecoration());
 
-        return v;
+        return view;
     }
 
     @Override
@@ -80,8 +98,10 @@ public class ListingFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mSimpleCursorRecyclerAdapter.swapCursor(mCursor = ListManager.get(getActivity()).queryGls());
+        mSimpleCursorRecyclerAdapter.swapCursor(mCursor = ListManager.get(getActivity())
+                .queryItemList(listId));
     }
+
 
     class SimpleCursorRecyclerAdapter extends CursorRecyclerAdapter<SimpleViewHolder> {
 
@@ -155,20 +175,16 @@ public class ListingFragment extends Fragment {
                 views[i].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(getActivity(),
-                                ItemListActivity.class);
-                        mCursor = ListManager.get(getActivity()).queryListName(
-                                mSimpleCursorRecyclerAdapter.getItemId(getAdapterPosition()));
-                        if (mCursor.moveToFirst()) {
-                            i.putExtra(ItemListFragment.EXTRA_LIST_ID,
-                                    (mSimpleCursorRecyclerAdapter.getItemId(getAdapterPosition())));
-                            i.putExtra(ItemListFragment.EXTRA_LIST_NAME, mCursor.getString(
-                                    mCursor.getColumnIndex("name")));
-                            startActivity(i);
-                        }
+                        Toast.makeText(getActivity(), "Element " + getAdapterPosition() +
+                                " clicked.", Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(getActivity().getApplicationContext(),
+                                TestIntentActivity.class);
+                        startActivity(i);
                     }
                 });
+
             }
         }
     }
 }
+

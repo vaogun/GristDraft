@@ -4,11 +4,17 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textColorPrimary">#99000000</item>
         <item name="android:textColorSecondary">#ffffff</item>
+        <item name="colorControlActivated">#99FF7519</item>
         <!-- Customize your theme here. -->
     </style>
 
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabIndicatorColor">#FFFFFF</item>
         <item name="tabSelectedTextColor">#FFFFFF</item>
+    </style>
+
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColorPrimary">#ffffff</item>
+        <item name="android:background">#66FFA366</item>
     </style>
 </resources>

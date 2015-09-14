@@ -3,4 +3,10 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="hint"><i>Enter list name...</i></string>
+    <string name="hint_item"><i>Enter item...</i></string>
+    <string name="hint_amount"><i>Enter number...</i></string>
+    <string name="hint_store"><i>Enter store...</i></string>
+    <string name="hint_price"><i>Enter price...</i></string>
+    <string name="hint_category"><i>Enter category...</i></string>
 </resources>

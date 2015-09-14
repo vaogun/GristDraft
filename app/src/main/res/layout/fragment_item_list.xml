@@ -14,12 +14,12 @@
         android:background="#22FFA366"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButtonList"
+        android:id="@+id/floatingActionButtonItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="15dp"
-        android:src="@drawable/ic_list_white_24dp"
+        android:src="@drawable/ic_add_white_24dp"
         android:layout_gravity="bottom|end"
         android:clickable="true"
         app:elevation="3dp"

@@ -40,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
         mSlidingTabLayout.setDividerColors(-1);
         viewPager.setAdapter(mSectionPagerAdapter);
         mSlidingTabLayout.setViewPager(viewPager);
-
-        //tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
     }
 
     @Override
